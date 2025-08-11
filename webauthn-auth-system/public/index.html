@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>WebAuthn Demo (Register & Login)</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 640px; margin: 40px auto; padding: 0 20px; }
+    input, button { padding: 8px; margin: 6px 0; width: 100%; box-sizing: border-box; }
+    .row { display:flex; gap:10px; }
+    .col { flex:1; }
+    pre { background:#f4f4f4; padding:10px; overflow:auto; }
+  </style>
+</head>
+<body>
+  <h1>WebAuthn Demo (Register & Login)</h1>
+
+  <label>Username:
+    <input id="username" placeholder="Enter username (e.g., riyaz01)" />
+  </label>
+
+  <div class="row">
+    <div class="col">
+      <button id="registerBtn">Register with Touch ID</button>
+    </div>
+    <div class="col">
+      <button id="loginBtn">Login with Touch ID</button>
+    </div>
+  </div>
+
+  <h3>Console output</h3>
+  <pre id="log"></pre>
+
+  <script src="./client.js"></script>
+</body>
+</html>
