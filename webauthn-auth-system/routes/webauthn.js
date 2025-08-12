@@ -93,24 +93,31 @@ router.post('/authn-options', async (req, res) => {
   if (!username) return res.status(400).json({ error: 'Missing username' });
 
   const creds = await WebAuthnCredential.find({ username });
-  if (!creds || creds.length === 0) return res.status(404).json({ error: 'No credentials for user' });
+  if (!creds || creds.length === 0) {
+    return res.status(404).json({ error: 'No credentials for user' });
+  }
 
-  const allowCredentials = creds.map(c => ({
-    id: new Uint8Array(c.credentialID),
+  const allowCredentialsForGen = creds.map(c => ({
+    id: base64url.encode(Buffer.from(c.credentialID)), 
     type: 'public-key',
-    transports: ['internal'],
+    transports: c.transports || ['internal'],
   }));
 
   const options = generateAuthenticationOptions({
-    allowCredentials,
-    rpID,
+    allowCredentials: allowCredentialsForGen, 
     userVerification: 'required',
-    timeout: 60000,
+    rpID,
   });
 
   challengeMemory.set(username, toBase64url(options.challenge));
+
   options.challenge = toBase64url(options.challenge);
-  options.allowCredentials = options.allowCredentials.map(c => ({ ...c, id: toBase64url(c.id) }));
+  options.allowCredentials = allowCredentialsForGen;
+
+  /*options.allowCredentials = options.allowCredentials.map(c => ({
+    ...c,
+    id: toBase64url(c.id),
+  })); */
 
   res.json(options);
 });
