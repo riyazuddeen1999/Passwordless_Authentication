@@ -8,19 +8,15 @@ router.get('/ping', (req, res) => {
 
 module.exports = router;
 
-
-
 //const express = require('express');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
 //const router = express.Router();
-
 router.get('/ping', (req, res) => {
   console.log('✅ GET /ping hit');
   res.status(200).json({ message: 'pong' });
 });
-
 
 // Register
 router.post('/register', async (req, res) => {

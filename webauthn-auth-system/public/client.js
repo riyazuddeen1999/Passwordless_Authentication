@@ -3,7 +3,6 @@ function log(...args) {
   pre.textContent += args.map(a => typeof a === 'string' ? a : JSON.stringify(a, null, 2)).join(' ') + '\n';
 }
 
-// Base64url helpers
 function base64urlToBuffer(base64url) {
   const padding = '='.repeat((4 - base64url.length % 4) % 4);
   const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/') + padding;
@@ -33,7 +32,6 @@ document.getElementById('registerBtn').addEventListener('click', async () => {
   const options = await res.json();
   log('Options:', options);
 
-  // decode
   options.challenge = base64urlToBuffer(options.challenge);
   options.user.id = base64urlToBuffer(options.user.id);
 

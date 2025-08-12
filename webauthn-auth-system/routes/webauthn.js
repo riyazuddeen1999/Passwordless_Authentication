@@ -10,18 +10,17 @@ import WebAuthnCredential from '../models/WebAuthnCredential.js';
 import { randomBytes } from 'crypto';
 
 const router = express.Router();
-const challengeMemory = new Map(); // username -> base64url challenge
+const challengeMemory = new Map();
 
 const rpName = process.env.RP_NAME || 'My WebAuthn App';
 const rpID = process.env.RP_ID || 'localhost';
 const origin = process.env.ORIGIN || `http://localhost:3001`;
 
-// Helper to encode ArrayBuffer/Buffer to base64url
 function toBase64url(buffer) {
   return base64url.encode(Buffer.from(buffer));
 }
 
-// -------------------- Registration --------------------
+// Registration
 router.post('/register-options', (req, res) => {
   const { username } = req.body;
   if (!username) return res.status(400).json({ error: 'Missing username' });
@@ -39,10 +38,8 @@ router.post('/register-options', (req, res) => {
     timeout: 60000,
   });
 
-  // store challenge (base64url) for the username
   challengeMemory.set(username, toBase64url(options.challenge));
 
-  // encode challenge and user.id for sending
   options.challenge = toBase64url(options.challenge);
   if (options.user && options.user.id) {
     options.user.id = toBase64url(options.user.id);
@@ -90,7 +87,7 @@ router.post('/verify-registration', async (req, res) => {
   res.json({ verified });
 });
 
-// -------------------- Authentication (Login) --------------------
+// Login
 router.post('/authn-options', async (req, res) => {
   const { username } = req.body;
   if (!username) return res.status(400).json({ error: 'Missing username' });
@@ -111,7 +108,6 @@ router.post('/authn-options', async (req, res) => {
     timeout: 60000,
   });
 
-  // store challenge and encode options
   challengeMemory.set(username, toBase64url(options.challenge));
   options.challenge = toBase64url(options.challenge);
   options.allowCredentials = options.allowCredentials.map(c => ({ ...c, id: toBase64url(c.id) }));
